@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         send =findViewById(R.id.sendButton);
 
         send.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onClick(View v) {
                 i=0;

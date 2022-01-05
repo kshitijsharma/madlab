@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     EditText contact_no,user_message;
     Button send;
     TextView msgs;
+    int i=0;
 //    static String message = new String();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +38,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         contact_no = findViewById(R.id.contact_number);
-        user_message = findViewById(R.id.user_message);
+        //user_message = findViewById(R.id.user_message);
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                String message =  "The current location of the user is " + Integer.toString((int)location.getLatitude()) + " : " + Integer.toString((int)location.getLongitude());
+                if(i==0){
+                String message =  "The current location of the user is " + String.valueOf(location.getLatitude()) + " : " + String.valueOf(location.getLongitude());
                 SmsManager smsManager =  SmsManager.getDefault();
                 System.out.println("Message is : " + message);
                 smsManager.sendTextMessage(contact_no.getText().toString(), null, message.toString(), null, null);
-
+                i=i+1;}
             }
         };
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                i=0;
                 lm.requestLocationUpdates("gps", 5000, 0, locationListener);
             }
         });

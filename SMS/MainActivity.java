@@ -1,12 +1,19 @@
-package com.example.sms;
+package com.example.ex07_sms;
 
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -18,52 +25,34 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.READ_SMS;
 import static android.Manifest.permission.RECEIVE_SMS;
 import static android.Manifest.permission.SEND_SMS;
+import static java.lang.Thread.sleep;
+
 public class MainActivity extends AppCompatActivity {
     EditText contact_no,user_message;
     Button send;
-    TextView msgs;
-    IntentFilter intentFilter;
-    private BroadcastReceiver intentReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            msgs.setText(intent.getExtras().getString("message"));
-        }
-    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ActivityCompat.requestPermissions(MainActivity.this,new
-                String[]{READ_SMS,RECEIVE_SMS,SEND_SMS,READ_PHONE_STATE},1);
+
         contact_no = findViewById(R.id.contact_number);
         user_message = findViewById(R.id.user_message);
-        send = findViewById(R.id.sendButton);
-//        msgs = findViewById(R.id.msgs);
-        intentFilter = new IntentFilter();
-        intentFilter.addAction("SMS_RECEIVED_ACTION");
+
+        send =findViewById(R.id.sendButton);
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                sendMsg(contact_no.getText().toString(),user_message.getText().toString());
+            public void onClick(View v) {
+                String message =  user_message.getText().toString();
+                SmsManager smsManager =  SmsManager.getDefault();
+                System.out.println("Message is : " + message);
+                smsManager.sendTextMessage(contact_no.getText().toString(), null, message.toString(), null, null);
+
             }
         });
-    }
-    void sendMsg(String num,String myMsg) {
-        String SENT = "Message Sent";
-        String DELIVERED = "Message Delivered";
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this,0,new Intent(DELIVERED),0);
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(num,null,myMsg,sentPI,deliveredPI);
-    }
-    @Override
-    protected void onPause() {
-        unregisterReceiver(intentReceiver);
-        super.onPause();
-    }
-    @Override
-    protected void onResume() {
-        registerReceiver(intentReceiver,intentFilter);
-        super.onResume();
+
+
+
     }
 }
